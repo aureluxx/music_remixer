@@ -1,22 +1,122 @@
+### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *.so
+*.pyd
+*.pyo
 
-# Virtual environment
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+share/python-wheels/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+### Virtual Environment ###
+# Virtualenv and similar
 venv/
 env/
+.venv/
+venv*/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
 
-# macOS system files
+### macOS ###
+# General
 .DS_Store
+.AppleDouble
+.LSOverride
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Jupyter Notebook checkpoints (if used)
-.ipynb_checkpoints/
-
-# IDE or editor folders
+### IDEs and Editors ###
+# VS Code
 .vscode/
-.idea/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
+# PyCharm/IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Others
+*.swp
+*.swo
+*~
+
+### Environment ###
 # Environment variables
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
 
+# Secrets
+secrets.yml
+secrets.yaml
+*.secret
+
+### Logs ###
+*.log
+logs/
+
+### Build/Dependency Files ###
+# Poetry
+poetry.lock
+
+# Pipenv
+Pipfile.lock
+
+# PyInstaller
+*.spec
+
+# PyBuilder
+target/

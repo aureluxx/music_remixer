@@ -1,4 +1,8 @@
-# Music Remixer
+# Music Remixer 🎛🎶
+
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Live-green)](https://musicremixer-aureluxx.streamlit.app)
+[![License](https://img.shields.io/github/license/aureluxx/music_remixer)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/aureluxx/music_remixer?style=social)](https://github.com/aureluxx/music_remixer/stargazers)
 
 A simple web app to remix your songs with various effects and styles, powered by Streamlit, Pydub, and Spotify's Pedalboard.
 

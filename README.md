@@ -4,7 +4,10 @@
 [![License](https://img.shields.io/github/license/aureluxx/music_remixer)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/aureluxx/music_remixer?style=social)](https://github.com/aureluxx/music_remixer/stargazers)
 
-A simple web app to remix your songs with various effects and styles, powered by Streamlit, Pydub, and Spotify's Pedalboard.
+A simple web app that lets you remix your songs with various effects and styles, powered by Streamlit, Pydub, and Spotify's Pedalboard.
+
+🌐 **Live Demo:**  
+Try it out on Streamlit Cloud 👉 [Launch Music Remixer](https://musicremixer-aureluxx.streamlit.app)
 
 ---
 
@@ -25,7 +28,7 @@ A simple web app to remix your songs with various effects and styles, powered by
 
 ---
 
-## Installation
+## Installation (for local development)
 
 ### 1. Clone the repository
 

@@ -50,30 +50,7 @@ pip install -r requirements.txt
 ### 4. Run the app
 
 ```bash
-streamlit run app.py
-```
-
----
-
-## Requirements
-
-- Python 3.8+
-- Streamlit
-- Pydub
-- Pedalboard
-- Numpy
-
----
-
-## File Structure
-
-```
-music_remixer/
-├── app.py             # Streamlit frontend app
-├── remix_engine.py    # Core audio remixing engine
-├── requirements.txt   # Dependencies list
-├── README.md          # Project description
-└── .gitignore         # Git ignored files
+streamlit run streamlit_app.py
 ```
 
 ---

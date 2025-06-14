@@ -4,25 +4,56 @@ import os
 import random
 from remix_engine import remix_song
 
-# --- Preset Values ---
+# --- Preset Values (Single Source of Truth) ---
 PRESETS = {
-    "lofi": {"pitch": -3, "speed": 0.92, "reverb": 0.5, "slowdown": 0.8, "crackle_vol": 0.35, "ambient_vol": 0.45},
+    "lofi": {"pitch": -3, "speed": 0.92, "reverb": 0.5, "crackle_vol": 0.35, "ambient_vol": 0.45},
     "chipmunk": {"pitch": 7, "speed": 1.15, "reverb": 0.25, "crackle_vol": 0.25, "ambient_vol": 0.3},
     "nightcore": {"pitch": 5, "speed": 1.3, "reverb": 0.3, "crackle_vol": 0.15, "ambient_vol": 0.25},
-    "Dreamy": {"pitch": -3, "speed": 0.8, "reverb": 0.55, "slowdown": 1.0, "crackle_vol": 0.25, "ambient_vol": 0.55},
-    "Vintage": {"pitch": -1, "speed": 0.88, "reverb": 0.22, "slowdown": 1.0, "crackle_vol": 0.45, "ambient_vol": 0.35},
-    "Glitchy": {"pitch": 1, "speed": 1.12, "reverb": 0.12, "slowdown": 1.0, "crackle_vol": 0.12, "ambient_vol": 0.15},
-    "Hyperspeed": {"pitch": 6, "speed": 1.35, "reverb": 0.18, "slowdown": 1.0, "crackle_vol": 0.1, "ambient_vol": 0.1},
-    "Underwater": {"pitch": -2, "speed": 0.78, "reverb": 0.45, "slowdown": 1.0, "crackle_vol": 0.25, "ambient_vol": 0.6},
-    "Radio": {"pitch": 0, "speed": 1.0, "reverb": 0.15, "slowdown": 1.0, "crackle_vol": 0.38, "ambient_vol": 0.3},
-    "Alien": {"pitch": 12, "speed": 1.28, "reverb": 0.35, "slowdown": 1.0, "crackle_vol": 0.2, "ambient_vol": 0.35},
-    "Spooky": {"pitch": -5, "speed": 0.83, "reverb": 0.65, "slowdown": 1.0, "crackle_vol": 0.35, "ambient_vol": 0.4},
+    "Dreamy": {"pitch": -3, "speed": 0.8, "reverb": 0.55, "crackle_vol": 0.25, "ambient_vol": 0.55},
+    "Vintage": {"pitch": -1, "speed": 0.88, "reverb": 0.22, "crackle_vol": 0.45, "ambient_vol": 0.35},
+    "Glitchy": {"pitch": 1, "speed": 1.12, "reverb": 0.12, "crackle_vol": 0.12, "ambient_vol": 0.15},
+    "Hyperspeed": {"pitch": 6, "speed": 1.35, "reverb": 0.18, "crackle_vol": 0.1, "ambient_vol": 0.1},
+    "Underwater": {"pitch": -2, "speed": 0.78, "reverb": 0.45, "crackle_vol": 0.25, "ambient_vol": 0.6},
+    "Radio": {"pitch": 0, "speed": 1.0, "reverb": 0.15, "crackle_vol": 0.38, "ambient_vol": 0.3},
+    "Alien": {"pitch": 12, "speed": 1.28, "reverb": 0.35, "crackle_vol": 0.2, "ambient_vol": 0.35},
+    "Spooky": {"pitch": -5, "speed": 0.83, "reverb": 0.65, "crackle_vol": 0.35, "ambient_vol": 0.4},
 }
 
 # --- App Layout ---
 st.set_page_config(page_title="🎚️ Audio Remix Studio", layout="centered")
 st.title("🎚️ Audio Remix Studio")
 st.markdown("Transform your tracks with professional effects and background layers")
+
+# --- Callback to apply presets ---
+def apply_preset():
+    remix_mode = st.session_state.remix_mode
+    theme = st.session_state.theme
+    surprise_me = st.session_state.surprise_me
+
+    preset_key = remix_mode
+    if remix_mode == "themed":
+        if surprise_me:
+            theme_options = list({k for k in PRESETS.keys() if k not in ["lofi", "chipmunk", "nightcore"]})
+            if len(theme_options) > 1 and "active_preset" in st.session_state:
+                 if st.session_state.active_preset in theme_options:
+                    theme_options.remove(st.session_state.active_preset)
+            preset_key = random.choice(theme_options)
+        else:
+            preset_key = theme
+
+    st.session_state.active_preset = preset_key
+    preset_values = PRESETS.get(preset_key, {})
+
+    for key, value in preset_values.items():
+        st.session_state[key] = value
+
+# --- Session State Initialization ---
+if 'initialized' not in st.session_state:
+    st.session_state.initialized = True
+    st.session_state.remix_mode = "lofi"
+    st.session_state.theme = "Dreamy"
+    st.session_state.surprise_me = False
+    apply_preset()
 
 # --- File Upload ---
 with st.expander("🎧 Upload Audio Files", expanded=True):
@@ -34,71 +65,46 @@ with st.expander("🎧 Upload Audio Files", expanded=True):
         ambient_audio = st.file_uploader("Ambient background (optional)", type=["mp3", "wav"])
     st.caption("🔍 Tip: Search for crackles or ambient sounds at [freesound.org](https://freesound.org)")
 
-# --- Session State Init ---
-def update_sliders_from_preset(preset):
-    st.session_state.pitch = preset.get("pitch", 0)
-    st.session_state.speed = preset.get("speed", 1.0)
-    st.session_state.reverb = preset.get("reverb", 0.3)
-    st.session_state.slowdown = preset.get("slowdown", 0.85)
-    st.session_state.crackle_vol = preset.get("crackle_vol", 0.1)
-    st.session_state.ambient_vol = preset.get("ambient_vol", 0.2)
-    st.session_state.manual_speed = False  # Reset manual override
-
-if "initialized" not in st.session_state:
-    update_sliders_from_preset(PRESETS["lofi"])
-    st.session_state.initialized = True
-
-if "manual_speed" not in st.session_state:
-    st.session_state.manual_speed = False
-
 # --- Mode & Theme Selection ---
 st.markdown("## 🎚️ Remix Settings")
-remix_mode = st.selectbox("Choose remix mode", ["lofi", "chipmunk", "nightcore", "themed"])
-theme = None
-surprise_me = False
+remix_mode = st.selectbox(
+    "Choose remix mode",
+    ["lofi", "chipmunk", "nightcore", "themed"],
+    key='remix_mode',
+    on_change=apply_preset
+)
 
-if remix_mode == "themed":
+is_themed_mode = remix_mode == "themed"
+if is_themed_mode:
     theme_options = list({k for k in PRESETS.keys() if k not in ["lofi", "chipmunk", "nightcore"]})
-    theme_col1, theme_col2 = st.columns(2)
+    theme_col1, theme_col2 = st.columns([2,1])
     with theme_col1:
-        theme = st.selectbox("Choose a theme", theme_options)
+        st.selectbox("Choose a theme", theme_options, key="theme", on_change=apply_preset)
     with theme_col2:
-        surprise_me = st.checkbox("🎲 Surprise me")
-else:
-    theme_options = []
-
-# --- Auto Apply Preset ---
-preset_key = random.choice(theme_options) if remix_mode == "themed" and surprise_me else (theme if remix_mode == "themed" else remix_mode)
-preset = PRESETS.get(preset_key, {})
-update_sliders_from_preset(preset)
+        st.checkbox("🎲 Surprise me", key="surprise_me", on_change=apply_preset, help="Randomly picks a new theme.")
 
 # --- Effect Controls ---
 with st.expander("🎛️ Effect Controls", expanded=True):
-    pitch = st.slider("Pitch Shift", -12, 12, st.session_state.pitch)
-
-    speed_slider = st.slider("Playback Speed", 0.5, 2.0, st.session_state.speed, 0.01)
-    if speed_slider != st.session_state.speed:
-        st.session_state.manual_speed = True
-    st.session_state.speed = speed_slider
-    speed = speed_slider
-
-    reverb = st.slider("Reverb Amount", 0.0, 1.0, st.session_state.reverb, 0.01)
-    slowdown = st.slider("Slowdown (Lofi only)", 0.5, 1.0, st.session_state.slowdown, 0.01)
+    st.slider("Pitch Shift", -12, 12, key="pitch", disabled=is_themed_mode)
+    st.slider("Playback Speed", 0.5, 2.0, key="speed", step=0.01, disabled=is_themed_mode)
+    st.slider("Reverb Amount", 0.0, 1.0, key="reverb", step=0.01, disabled=is_themed_mode)
+    if is_themed_mode:
+        st.info("Pitch, Speed, and Reverb are controlled by the selected Theme.")
 
 # --- Background Volume Sliders ---
 if crackle_audio or ambient_audio:
     with st.expander("🔊 Background Mix", expanded=True):
         if crackle_audio:
-            crackle_vol = st.slider("Crackle Volume", 0.0, 1.0, st.session_state.crackle_vol, 0.01)
+            st.slider("Crackle Volume", 0.0, 1.0, key="crackle_vol", step=0.01)
         else:
-            crackle_vol = 0.0
+            st.session_state.crackle_vol = 0.0
         if ambient_audio:
-            ambient_vol = st.slider("Ambient Volume", 0.0, 1.0, st.session_state.ambient_vol, 0.01)
+            st.slider("Ambient Volume", 0.0, 1.0, key="ambient_vol", step=0.01)
         else:
-            ambient_vol = 0.0
+            st.session_state.ambient_vol = 0.0
 else:
-    crackle_vol = 0.0
-    ambient_vol = 0.0
+    st.session_state.crackle_vol = 0.0
+    st.session_state.ambient_vol = 0.0
 
 # --- Process Button ---
 st.markdown("---")
@@ -110,16 +116,13 @@ if main_audio:
                     song_bytes=main_audio.read(),
                     crackle_bytes=crackle_audio.read() if crackle_audio else None,
                     ambient_bytes=ambient_audio.read() if ambient_audio else None,
-                    remix_mode=remix_mode,
-                    pitch=pitch,
-                    speed=speed,
-                    reverb_wet=reverb,
-                    slowdown=slowdown,
-                    crackle_vol=crackle_vol,
-                    ambient_vol=ambient_vol,
-                    theme=theme,
-                    surprise_me=surprise_me,
-                    manual_speed=st.session_state.manual_speed
+                    remix_mode=st.session_state.remix_mode,
+                    pitch=st.session_state.pitch,
+                    speed=st.session_state.speed,
+                    reverb_wet=st.session_state.reverb,
+                    crackle_vol=st.session_state.crackle_vol,
+                    ambient_vol=st.session_state.ambient_vol,
+                    theme=st.session_state.active_preset
                 )
 
                 with open(output_path, "rb") as f:
@@ -130,5 +133,6 @@ if main_audio:
                 os.unlink(output_path)
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
+                st.exception(e) # Also log the full traceback for debugging
 else:
     st.warning("⚠️ Please upload a main audio file to begin.")

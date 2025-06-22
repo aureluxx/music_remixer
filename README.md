@@ -44,13 +44,25 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+### 3. Install Pyhton dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the app
+### 4. Install system dependencies (for audio processing)
+
+This project uses `ffmpeg` (which includes `ffprobe`) to process audio via the Pydub library.
+
+To install `ffmpeg` locally:
+
+- **macOS (Homebrew):** `brew install ffmpeg`  
+- **Ubuntu/Debian:** `sudo apt install ffmpeg`  
+- **Windows:** Download from https://ffmpeg.org/download.html and ensure `ffmpeg` is added to your system PATH.
+
+> 🛠 For **Streamlit Cloud deployment**, `ffmpeg` is installed automatically via the `packages.txt` file included in this repository.
+
+### 5. Run the app
 
 ```bash
 streamlit run streamlit_app.py
